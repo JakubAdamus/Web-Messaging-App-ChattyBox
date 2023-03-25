@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace WebApi.Models.MessagesDTO
+namespace WebApi.Models.MessagesDtos
 {
     public class MessageConverter : JsonConverter<MessageDTO>
     {
@@ -25,6 +25,8 @@ namespace WebApi.Models.MessagesDTO
                     return JsonSerializer.Deserialize<FileMessageDTO>(jsonObject.GetRawText(), options);
                 case "createText":
                     return JsonSerializer.Deserialize<CreateTextMessageDTO>(jsonObject.GetRawText(), options);
+                case "createFile":
+                    return JsonSerializer.Deserialize<CreateFileMessageDTO>(jsonObject.GetRawText(), options);
                 default:
                     throw new JsonException($"Nieznany typ wiadomości: {messageType}.");
             }

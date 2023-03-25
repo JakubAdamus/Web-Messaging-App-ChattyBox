@@ -1,9 +1,9 @@
 ﻿using DAL.Database.Entities;
 using System.ComponentModel.DataAnnotations;
-using Web.Models.UserDTOs;
-using WebApi.Models.MessagesDTO;
+using Web.Models.UserDtos;
+using WebApi.Models.MessagesDtos;
 
-namespace WebApi.Models.ChatDTO
+namespace WebApi.Models.ChatDtos
 {
     public class GetChatDTO
     {
@@ -18,6 +18,6 @@ namespace WebApi.Models.ChatDTO
 
         public virtual ICollection<MessageDTO>? AllMessages { get; set; }
 
-        //public virtual ICollection<FileMessageDTO>? FileMessages { get; set; }
+
     }
 }
