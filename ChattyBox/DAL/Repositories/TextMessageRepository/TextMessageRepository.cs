@@ -33,7 +33,6 @@ namespace DAL.Repositories.TextMessageRepository
             _context.TextMessages.Add(message);
         }
 
-
         public void DeleteTextMessage(int id)
         {
             var textMessage = _context.TextMessages.FirstOrDefault(c => c.Id == id) 
@@ -47,9 +46,9 @@ namespace DAL.Repositories.TextMessageRepository
             var textMessage = _context.TextMessages.SingleOrDefault(t => t.Id == id) ?? throw new NotFoundException("Nie znaleziono wiadomosci");
             return textMessage;
         }
+
         public TextMessage GetLastTextMessage(int chatid)
         {
-
             var message = _context.TextMessages
                 .Include(m => m.Sender)
                 .Where(m => m.ChatId == chatid)
@@ -57,10 +56,7 @@ namespace DAL.Repositories.TextMessageRepository
                 .FirstOrDefault() ?? throw new NotFoundException("Nie znaleziono czatu");
 
             return message;
-
         }
-
-
 
     }
 }
