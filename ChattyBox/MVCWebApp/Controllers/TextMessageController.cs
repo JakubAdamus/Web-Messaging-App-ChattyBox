@@ -1,11 +1,11 @@
 ﻿using BLL.DataTransferObjects.MessageDtos;
 using BLL.Services.TextMessageService;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.ViewModels;
 
-namespace WebApi.Controllers
+namespace MVCWebApp.Controllers
 {
+    [Authorize]
     public class TextMessageController : Controller
     {
         private readonly ITextMessageService _textMessageService;
@@ -16,7 +16,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("txtMsg/{id}")]
-        public ActionResult<TextMessageDTO> Get([FromRoute] int id)
+        public ActionResult<TextMessageDTO> Get(int id)
         {
             return View(_textMessageService.GetTextMessage(id));
         }
@@ -28,19 +28,19 @@ namespace WebApi.Controllers
             if (ModelState.IsValid)
                 _textMessageService.CreateTextMessage(messageDTO);
              
-            return RedirectToAction("Get", "Chat", new { userId=messageDTO.SenderId,chatId = messageDTO.ChatId, pageNumber = 1 });
+            return RedirectToAction("Get", "Chat", new { chatId = messageDTO.ChatId, pageNumber = 1 });
         }
 
-        [HttpPost("TextMessage/Delete/{chatId}/{messageId}/{senderId}")]
+        [HttpPost]
         [TypeFilter(typeof(RolesAuthorization), Arguments = new object[] { "Admin" })]
-		public ActionResult Delete([FromRoute] int chatId, [FromRoute] int messageId, [FromRoute] int senderId)
+		public ActionResult Delete(int chatId, int messageId)
         {
             _textMessageService.DeleteTextMessage(messageId);
-            return RedirectToAction("Get", "Chat", new { userId = senderId, chatId = chatId, pageNumber = 1 });
+            return RedirectToAction("Get", "Chat", new { chatId, pageNumber = 1 });
         }
 
-        [HttpGet("txtMsg/GetNewest/{idChat}")]
-        public ActionResult<GetNewestMessageDTO> GetNewestMessage([FromRoute] int idChat)
+        [HttpGet]
+        public ActionResult<GetNewestMessageDTO> GetNewestMessage(int idChat)
         {
             return View(_textMessageService.GetLastTextMessage(idChat));
         }

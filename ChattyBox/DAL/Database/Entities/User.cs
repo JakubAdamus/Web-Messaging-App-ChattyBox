@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Database.Entities
 {
@@ -28,6 +22,10 @@ namespace DAL.Database.Entities
         public DateTime? LastLog { get; set; }
         
         public DateTime Created { get; set; }
+
+        public string? RefreshToken { get; set; }
+        public DateTime? TokenCreated { get; set; }
+        public DateTime? TokenExpires { get; set; }
 
         public virtual ICollection<UserChat>? UserChats { get; set; }
 

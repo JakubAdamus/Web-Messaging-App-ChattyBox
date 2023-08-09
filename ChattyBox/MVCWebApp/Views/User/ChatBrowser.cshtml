@@ -1,5 +1,5 @@
 ﻿@using Microsoft.CodeAnalysis.Editing
-@model WebApi.ViewModels.ChatsAndCount
+@model MVCWebApp.ViewModels.ChatsAndCount
 
 <link rel="stylesheet" href="~/css/chat.css" />
 
@@ -24,7 +24,6 @@
             if (x > Model.ChatsPerPage) break;
 	        <a asp-controller="Chat"
 	           asp-action="Get"
-	           asp-route-userId="@Model.UserId"
 	           asp-route-chatId="@chat.Id"
 	           asp-route-pageNumber="1" class="list-group-item list-group-item-action flex-column align-items-start">
 
@@ -33,7 +32,6 @@
 			        <a asp-controller="Chat" 
 			           asp-action="GetUsersInChat" 
 			           asp-route-chatId="@chat.Id" 
-			           asp-route-userId="@Model.UserId" 
 			           asp-route-pageNumber="1" class="btn btn-success">Wyświetl użytkowników</a>
 		        </div>
 	        </a>
@@ -71,5 +69,5 @@
     else throw new Exception("Ilosc czatow na strone nie moze byc mniejsza badz rowna 0");
 
     <br /> <br />
-    <a asp-controller="User" asp-action="GetUserMenu" asp-route-id="@Model.UserId" class="btn btn-primary">Wróć do menu</a>
+    <a asp-controller="User" asp-action="UserMenu" class="btn btn-primary">Wróć do menu</a>
 }

@@ -1,11 +1,8 @@
-﻿using DAL.Database.Entities;
-using DAL.UnitOfWork;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Http.Extensions;
 using BLL.Services.ChatService;
 
-namespace WebApi
+namespace MVCWebApp
 {
     public class RolesAuthorization : ActionFilterAttribute
     {
@@ -19,20 +16,19 @@ namespace WebApi
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-	        var senderId = Convert.ToInt32(context.HttpContext.Request.RouteValues["senderId"]);
-            var chatId = Convert.ToInt32(context.HttpContext.Request.RouteValues["chatId"]);
+            var senderId = int.Parse(context.HttpContext.User.FindFirst("userId")?.Value);
+            var chatId = Convert.ToInt32(context.HttpContext.Request.Query["chatId"]);
             var userRole = chatService.GetUserRole(senderId, chatId);
             if (userRole != "Admin")
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                 {
-	                controller = "User",
+                    controller = "User",
                     action = "Unauthorized"
-				}));
+                }));
             }
-
             base.OnActionExecuting(context);
-        } 
+        }
     }
 
 }

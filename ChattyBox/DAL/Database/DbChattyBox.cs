@@ -1,13 +1,8 @@
 ﻿using DAL.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.Database
 {
@@ -32,7 +27,7 @@ namespace DAL.Database
             return (hmac.Key, hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
         }
 
-
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
@@ -118,8 +113,8 @@ namespace DAL.Database
 
             List<User> initUsers = new List<User>()
             {
-                new User { Id=1, Email = "marcinq@gmail.com", Username="MarIwin", Created = DateTime.Now, PasswordHash = user1.passwordHash, PasswordSalt = user1.passwordSalt  },
-                new User { Id = 2, Email = "tymonq@gmail.com", Username = "TymonSme", Created = DateTime.Now, PasswordHash = user2.passwordHash, PasswordSalt = user2.passwordSalt }
+                new User { Id=1, Email = "marcinq@gmail.com", Username="MarIwin", Created = DateTime.Now, PasswordHash = user1.passwordHash, PasswordSalt = user1.passwordSalt, TokenCreated = DateTime.Now, TokenExpires = DateTime.Now.AddDays(1), RefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))},
+                new User { Id = 2, Email = "tymonq@gmail.com", Username = "TymonSme", Created = DateTime.Now, PasswordHash = user2.passwordHash, PasswordSalt = user2.passwordSalt, TokenCreated = DateTime.Now, TokenExpires = DateTime.Now.AddDays(1), RefreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)) }
             };
 
             modelBuilder.Entity<User>().HasData(initUsers.ToArray());
@@ -148,6 +143,7 @@ namespace DAL.Database
             modelBuilder.Entity<Chat>().HasData(initChats);
 
             var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
             string relativePath;
             string fullPath;
 

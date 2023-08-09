@@ -1,11 +1,11 @@
 ﻿using BLL.DataTransferObjects.UserDtos;
 using BLL.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.ViewModels;
+using MVCWebApp.ViewModels;
 
-namespace WebApi.Controllers
+
+namespace MVCWebApp.Controllers
 {
     public class UserController : Controller
     {
@@ -15,19 +15,45 @@ namespace WebApi.Controllers
         {
             _userService = userService;
         }
+
         public IActionResult Login()
         {
-            return View("Login");
+            var userId = User.FindFirst("userId")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+                return RedirectToAction("UserMenu");
+            
+            return View("LoginForm");
         }
 
-        [HttpGet("user/get/{id}")]
-        public ActionResult<UserDTO> Get([FromRoute] int id)
+        public IActionResult Logout()
+        {
+            var token = Request.Cookies["userToken"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                Response.Cookies.Delete("userToken");
+            }
+            return RedirectToAction("Login");
+        }
+
+        [Authorize]
+        public ActionResult<UserDTO> UserMenu()
+        {
+            int userId = int.Parse(User.FindFirst("userId")?.Value);
+
+            return View(_userService.GetUser(userId));
+        }
+
+        [Authorize]
+        [HttpGet]
+        public ActionResult<UserDTO> Get(int id)
         {
             return View(_userService.GetUser(id));
         }
 
-        [HttpGet("user/getChats/{id}/{pageNumber}")]
-        public ActionResult<IEnumerable<ChatsAndCount>> GetChats([FromRoute] int id, [FromRoute] int pageNumber)
+        [Authorize]
+        [HttpGet]
+        public ActionResult<IEnumerable<ChatsAndCount>> GetChats(int id, int pageNumber)
         {
             var count = _userService.GetUserChatsCount(id);
 
@@ -49,7 +75,7 @@ namespace WebApi.Controllers
             return View("ChatBrowser", chats);
         }
 
-        [HttpGet("user/register")]
+        [HttpGet]
         public ActionResult Register()
         {
             return View();
@@ -66,12 +92,21 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<UserDTO> Login(LoginUserDTO loginUser)
+        public ActionResult Login(LoginUserDTO loginUser)
         {
-            return View("UserMenu", _userService.LoginUser(loginUser));
+            var tokenToReturn = _userService.LoginUser(loginUser);
+
+            Response.Cookies.Append("userToken", tokenToReturn.TokenContent, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.Now.AddDays(1)
+            }); ; 
+
+            return RedirectToAction("UserMenu","User");
         }
 
-        [HttpGet("user/createChat")]
+        [Authorize]
+        [HttpGet]
         public ActionResult CreateChat(int id)
         {
             return RedirectToAction("Create", "Chat", new { id });
@@ -82,9 +117,5 @@ namespace WebApi.Controllers
 			return View("AuthorizeFailed");
         }
 
-        public ActionResult<UserDTO> GetUserMenu(int id)
-        {
-            return View("UserMenu", _userService.GetUser(id));
-        }
     }
 }
