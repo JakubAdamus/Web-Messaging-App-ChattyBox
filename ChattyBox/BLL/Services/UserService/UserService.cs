@@ -125,7 +125,7 @@ namespace BLL.Services.UserService
                     {
                             new (type:"userId",user.Id.ToString()),
                     },
-                    expires: DateTime.Now.AddMinutes(1),
+                    expires: DateTime.Now.AddMinutes(15),
                     signingCredentials: creds
                );
 
@@ -154,11 +154,6 @@ namespace BLL.Services.UserService
 
         public int GetUserChatsCount(int id)
         {
-            var chatsCount = _unitOfWork.Users.GetUserChatsCount(id);
-
-            if (chatsCount == 0)
-                throw new NotFoundException("Nie znaleziono czatów");
-
             return _unitOfWork.Users.GetUserChatsCount(id);
         }
 
